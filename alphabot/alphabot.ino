@@ -1,117 +1,166 @@
 /*****************************************
-   Alphabot Startcode
-   met toestansdiagrammen
-   Emmauscollege
-   v20230921CAM
-   Met dank aan de documentatie op: 
-   https://www.waveshare.com/wiki/AlphaBot2-Ar
+   Alphabot Startcode met toestanden
+   Emmauscollege - Verbeterde versie
  *****************************************/
- 
-/*****************************************
-   variabelen 
- *****************************************/
-// gebruikte pinnen
-const int pinPWMA = 6;           //Left Motor Speed pin (ENA)
-const int pinAIN2 = A0;          //Motor-L forward (IN2).
-const int pinAIN1 = A1;          //Motor-L backward (IN1)
-const int pinPWMB = 5;           //Right Motor Speed pin (ENB)
-const int pinBIN1 = A2;          //Motor-R forward (IN3)
-const int pinBIN2 = A3;          //Motor-R backward (IN4)
-const int pinECHO = 2;           //ultrasonic distance sensor echo pin
-const int pinTRIG = 3;           //ultrasonic distance sensor trigger pin
 
-// variabelen om waarden van sensoren en actuatoren te onthouden
+// gebruikte pinnen
+const int pinPWMA = 6;
+const int pinAIN2 = A0;
+const int pinAIN1 = A1;
+const int pinPWMB = 5;
+const int pinBIN1 = A2;
+const int pinBIN2 = A3;
+const int pinECHO = 2;
+const int pinTRIG = 3;
+
+// sensorgegevens
 int afstandVoor = 0;
 
-// variabelen voor de toestanden
-const int VOORUIT = 1; // rij vooruit
-const int DRAAI   = 2; // draai
+// toestanden
+const int VOORUIT = 1;
+const int DRAAI   = 2;
+const int CHECK   = 3;
+const int DRAAIRECHTS = 4;
 int toestand = VOORUIT;
 unsigned long toestandStartTijd = 0;
 
-/*****************************************
-   functies 
- *****************************************/
-
-// Measure the distance in centimeter with the ultrasonic distance sensor
-int utrasonicDistance(int pinTrigger, int pinEcho)         
-{
+// afstand meten
+int utrasonicDistance(int pinTrigger, int pinEcho) {
   float distance_ms = 0;
   int distance_cm = 0;
-  digitalWrite(pinTrigger, LOW);   // set trig pin low 2μs
+  digitalWrite(pinTrigger, LOW);
   delayMicroseconds(2);
-  digitalWrite(pinTrigger, HIGH);  // set trig pin 10μs , at last 10us 
+  digitalWrite(pinTrigger, HIGH);
   delayMicroseconds(10);
-  digitalWrite(pinTrigger, LOW);   // set trig pin low
-  distance_ms = pulseIn(pinEcho, HIGH);  // Read echo pin high level time(μs)
-  distance_cm = distance_ms / 58;       //cm = μs /58       
+  digitalWrite(pinTrigger, LOW);
+  distance_ms = pulseIn(pinEcho, HIGH);
+  distance_cm = distance_ms / 58;
   return distance_cm;
 }
 
-/*****************************************
-   setup() en loop()
- *****************************************/
-
-void setup() {                                      // deze functie wordt 1x uitgevoerd als de arduino start
-  // enable console en stuur opstartbericht
+void setup() {
   Serial.begin(9600);
   Serial.println("Alphabot start");
 
-  // zet pinmodes
-  pinMode(pinECHO, INPUT);    // ultrasonic echo input pin
-  pinMode(pinTRIG, OUTPUT);   // ultrasonic trigger output pin 
-  pinMode(pinPWMA, OUTPUT);   // linker motor snelheid analog output               
-  pinMode(pinAIN2, OUTPUT);   // linker motor richting digital output   
-  pinMode(pinAIN1, OUTPUT);   // linker motor richting digital output 
-  pinMode(pinPWMB, OUTPUT);   // rechter motor snelheid analog output   
-  pinMode(pinAIN1, OUTPUT);   // rechter motor richting digital output  
-  pinMode(pinAIN2, OUTPUT);   // rechter motor richting digital output
+  pinMode(pinECHO, INPUT);
+  pinMode(pinTRIG, OUTPUT);
+  pinMode(pinPWMA, OUTPUT);
+  pinMode(pinAIN2, OUTPUT);
+  pinMode(pinAIN1, OUTPUT);
+  pinMode(pinPWMB, OUTPUT);
+  pinMode(pinBIN1, OUTPUT);
+  pinMode(pinBIN2, OUTPUT);
 }
 
-void loop() {                                       // deze functie wordt oneindig herhaalt
-  // lees sensorwaarden
+void loop() {
   afstandVoor = utrasonicDistance(pinTRIG, pinECHO);
-  Serial.print("afstandVoor: ");Serial.print(afstandVoor);Serial.println(" cm");
+  Serial.print("afstandVoor: ");
+  Serial.print(afstandVoor);
+  Serial.println(" cm");
 
-  // bepaal toestand
-  if (toestand == VOORUIT) {                        // als toestand VOORUIT is
-    if (afstandVoor < 50) {                         // afstand < 50 cm
-      toestandStartTijd = millis();                 // reset tijd
-      toestand = DRAAI;                             // zet nieuwe toestand
+  // TOESTANDEN
+  if (toestand == VOORUIT) {
+    if (afstandVoor < 7 && toestand != DRAAIRECHTS) {
+      toestandStartTijd = millis();
+      toestand = DRAAI;
       Serial.println("Nieuwe toestand: DRAAI");
-    }
-    if (false) {                                    // conditie voor 2e pijl uit toestand VOORUIT invullen
-                                                    // code invullen
+    } else if (afstandVoor >= 7 && millis() - toestandStartTijd >= 800) {
+      toestandStartTijd = millis();
+      toestand = CHECK;
+      Serial.println("Nieuwe toestand: CHECK");
     }
   }
-  if (toestand == DRAAI) {                          // als toestand DRAAI is
-    if (millis() - toestandStartTijd > 1000) {      // 1 seconde voorbij
-      toestandStartTijd = millis();                 // reset tijd
-      toestand = VOORUIT;                           // zet nieuwe toestand
+
+  else if (toestand == CHECK) {
+    if (millis() - toestandStartTijd > 350) {
+      toestandStartTijd = millis();
+      
+      if (afstandVoor < 7) {
+        toestand = DRAAIRECHTS;
+      }
+      if (afstandVoor > 7) {
+        toestand= VOORUIT;
+         Serial.println("Nieuwe toestand: VOORUIT");
+      }
+    }
+  }
+
+  else if (toestand == DRAAI) {
+    // Tijd instellen voor de draai naar links
+    if (millis() - toestandStartTijd > 1000) {
+      toestandStartTijd = millis();
+      toestand = VOORUIT;
+      Serial.println("Nieuwe toestand: VOORUIT");
+    }
+  }
+  else if (toestand == DRAAIRECHTS) {
+    // Tijd instellen voor de draai naar rechts (iets korter dan de draai naar links)
+    if (millis() - toestandStartTijd > 37) {
+      toestandStartTijd = millis();
+      toestand= VOORUIT;
+    }
+  }
+
+  // ACTUATOREN
+  if (toestand == VOORUIT) {
+    int Speed = 100;
+    analogWrite(pinPWMA, Speed);
+    analogWrite(pinPWMB, Speed);
+    digitalWrite(pinAIN1, LOW);
+    digitalWrite(pinAIN2, HIGH);
+    digitalWrite(pinBIN1, LOW);
+    digitalWrite(pinBIN2, HIGH);
+  }
+
+  else if (toestand == DRAAI) {
+    // Draai naar links
+    int Speed = 50;
+    unsigned long draaiTijd = 1000;  // Tijd voor de draai naar links
+
+    analogWrite(pinPWMA, Speed);
+    analogWrite(pinPWMB, Speed);
+    digitalWrite(pinAIN1, LOW);
+    digitalWrite(pinAIN2, HIGH);
+    digitalWrite(pinBIN1, HIGH);
+    digitalWrite(pinBIN2, LOW);
+    
+    if (millis() - toestandStartTijd > draaiTijd) {
+      toestandStartTijd = millis();
+      toestand = VOORUIT;
+      Serial.println("Nieuwe toestand: VOORUIT");
+    }
+  }
+  
+  else if (toestand == DRAAIRECHTS) {
+    // Draai naar rechts
+    int Speed = 100;
+    unsigned long draaiTijd = 1000;  // Tijd voor de draai naar rechts (korter dan links)
+     Serial.println("Nieuwe toestand: DraaiRechts");
+
+    analogWrite(pinPWMA, Speed);
+    analogWrite(pinPWMB, Speed);
+    digitalWrite(pinAIN1, LOW);
+    digitalWrite(pinAIN2, HIGH);
+    digitalWrite(pinBIN1, HIGH);
+    digitalWrite(pinBIN2, LOW);
+
+    if (millis() - toestandStartTijd > draaiTijd) {
+      toestandStartTijd = millis();
+      toestand = VOORUIT;
       Serial.println("Nieuwe toestand: VOORUIT");
     }
   }
 
-  // zet actuatoren zoals hoort bij de toestand
-  if (toestand == VOORUIT) {
-    int Speed = 100; // snelheid 0 t/m 255
-    analogWrite(pinPWMA,Speed); // snelheid linkermotor
-    analogWrite(pinPWMB,Speed); // snelheid rechtermotor
-    digitalWrite(pinAIN1,LOW);  // linker motor vooruit
-    digitalWrite(pinAIN2,HIGH); // linker motor vooruit
-    digitalWrite(pinBIN1,LOW);  // rechter motor vooruit 
-    digitalWrite(pinBIN2,HIGH); // rechter motor vooruit 
-  }
-  if (toestand == DRAAI) {
-    int Speed = 50; // snelheid 0 t/m 255
-    analogWrite(pinPWMA,Speed); // snelheid linkermotor
-    analogWrite(pinPWMB,Speed); // snelheid rechtermotor
-    digitalWrite(pinAIN1,LOW);  // linker motor vooruit
-    digitalWrite(pinAIN2,HIGH); // linker motor vooruit
-    digitalWrite(pinBIN1,HIGH); // rechter motor achteruit  
-    digitalWrite(pinBIN2,LOW);  // rechter motor achteruit  
+  else if (toestand == CHECK) {
+    // tijdens CHECK mag de robot even niets doen
+    int Speed = 50;
+    analogWrite(pinPWMA, Speed);
+    analogWrite(pinPWMB, Speed);
+    digitalWrite(pinAIN1, HIGH);
+    digitalWrite(pinAIN2, LOW);
+    digitalWrite(pinBIN1, LOW);
+    digitalWrite(pinBIN2, HIGH);
   }
 
-  // vertraging om te zorgen dat berichten op de seriele monitor leesbaar blijven
   delay(50);
 }
