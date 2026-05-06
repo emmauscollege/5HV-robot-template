@@ -34,7 +34,7 @@ unsigned long toestandStartTijd = 0;
  *****************************************/
 
 // Measure the distance in centimeter with the ultrasonic distance sensor
-int utrasonicDistance(int pinTrigger, int pinEcho)         
+int ultrasonicDistance(int pinTrigger, int pinEcho)         
 {
   float distance_ms = 0;
   int distance_cm = 0;
@@ -70,7 +70,7 @@ void setup() {                                      // deze functie wordt 1x uit
 
 void loop() {                                       // deze functie wordt oneindig herhaalt
   // lees sensorwaarden
-  afstandVoor = utrasonicDistance(pinTRIG, pinECHO);
+  afstandVoor = ultrasonicDistance(pinTRIG, pinECHO);
   Serial.print("afstandVoor: ");Serial.print(afstandVoor);Serial.println(" cm");
 
   // bepaal toestand
