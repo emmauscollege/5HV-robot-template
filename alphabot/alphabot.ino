@@ -1,6 +1,6 @@
 /*****************************************
    Alphabot Startcode
-   met toestansdiagrammen
+   met toestandsdiagrammen
    Emmauscollege
    v20230921CAM
    Met dank aan de documentatie op: 
@@ -33,7 +33,7 @@ unsigned long toestandStartTijd = 0;
    functies 
  *****************************************/
 
-// Measure the distance in centimeter with the ultrasonic distance sensor
+// Meet de afstand in centimeters met behulp van de ultrasone afstandssensor
 int ultrasonicDistance(int pinTrigger, int pinEcho)         
 {
   float distance_ms = 0;
@@ -53,7 +53,7 @@ int ultrasonicDistance(int pinTrigger, int pinEcho)
  *****************************************/
 
 void setup() {                                      // deze functie wordt 1x uitgevoerd als de arduino start
-  // enable console en stuur opstartbericht
+  // start seriële communicatie en stuur opstartbericht naar Serial Monitor
   Serial.begin(9600);
   Serial.println("Alphabot start");
 
@@ -68,7 +68,7 @@ void setup() {                                      // deze functie wordt 1x uit
   pinMode(pinAIN2, OUTPUT);   // rechter motor richting digital output
 }
 
-void loop() {                                       // deze functie wordt oneindig herhaalt
+void loop() {                                       // deze functie wordt oneindig herhaald
   // lees sensorwaarden
   afstandVoor = ultrasonicDistance(pinTRIG, pinECHO);
   Serial.print("afstandVoor: ");Serial.print(afstandVoor);Serial.println(" cm");
@@ -80,9 +80,12 @@ void loop() {                                       // deze functie wordt oneind
       toestand = DRAAI;                             // zet nieuwe toestand
       Serial.println("Nieuwe toestand: DRAAI");
     }
-    if (false) {                                    // conditie voor 2e pijl uit toestand VOORUIT invullen
+    // schrijf hier je eigen code voor een 2e pijl uit toestand VOORUIT. Haal hiervoor /* en */ weg
+    /*
+    if (/* de voorwaarde van de pijl*/) {           // conditie voor 2e pijl uit toestand VOORUIT invullen
                                                     // code invullen
     }
+    */
   }
   if (toestand == DRAAI) {                          // als toestand DRAAI is
     if (millis() - toestandStartTijd > 1000) {      // 1 seconde voorbij
