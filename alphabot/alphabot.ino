@@ -82,7 +82,7 @@ void loop() {                                       // deze functie wordt oneind
     }
     // schrijf hier je eigen code voor een 2e pijl uit toestand VOORUIT. Haal hiervoor /* en */ weg
     /*
-    if (/* de voorwaarde van de pijl*/) {           // conditie voor 2e pijl uit toestand VOORUIT invullen
+    if () {                                         // conditie voor 2e pijl uit toestand VOORUIT invullen
                                                     // code invullen
     }
     */
