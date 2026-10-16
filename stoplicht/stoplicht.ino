@@ -2,7 +2,7 @@
    Stoplicht Startcode
    met toestansdiagrammen
    Emmauscollege
-   v20230921CAM
+   v20261016CAM
  *****************************************/
 
 /*****************************************
@@ -167,17 +167,18 @@ void setup() {
   pinMode(pin8Knop, INPUT);
   pinMode(pin7Wit, OUTPUT);
   pinMode(pin8Wit, OUTPUT);
+
   // witte lamp in knoppen aan (zit niet op elke versie van het stoplichtenplein)
   digitalWrite(pin8Wit, HIGH);
   digitalWrite(pin7Wit, HIGH);
 }
 
 void loop() {
-  // lees sensorwaarden
+  // STAP 1: lees sensorwaarden
   knop7 = digitalRead(pin7Knop);
   knop8 = digitalRead(pin8Knop);
 
-  // bepaal toestand
+  // STAP 2: bepaal of de toestand moet veranderen
   if (toestand == BORING) {
     if (millis() - toestandStartTijd > 1000) {
       toestandStartTijd = millis();
@@ -201,14 +202,14 @@ void loop() {
     }
   }
   if (toestand == EXCITING) {
-    if (knop7 == LOW && knop8 == LOW) { // beide knoppen niet ingedrukt
+    if (knop7 == LOW && knop8 == LOW) {          // beide knoppen niet ingedrukt
       toestandStartTijd = millis();
       toestand = BORING;
       Serial.println("Nieuwe toestand: BORING");
     }
   }
 
-  // zet stoplichten conform toestand
+  // STAP 3: stel de stoplichten in op basis van de toestand
   if (toestand == BORING) {
     for (int i = 1; i <= 8; i = i + 1) {
       stoplicht(i, ROOD);

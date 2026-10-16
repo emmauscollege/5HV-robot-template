@@ -2,7 +2,7 @@
    Alphabot Startcode
    met toestandsdiagrammen
    Emmauscollege
-   v20230921CAM
+   v20261016CAM
    Met dank aan de documentatie op: 
    https://www.waveshare.com/wiki/AlphaBot2-Ar
  *****************************************/
@@ -52,7 +52,8 @@ int ultrasonicDistance(int pinTrigger, int pinEcho)
    setup() en loop()
  *****************************************/
 
-void setup() {                                      // deze functie wordt 1x uitgevoerd als de arduino start
+// deze functie wordt 1x uitgevoerd als de arduino start
+void setup() {
   // start seriële communicatie en stuur opstartbericht naar Serial Monitor
   Serial.begin(9600);
   Serial.println("Alphabot start");
@@ -68,12 +69,15 @@ void setup() {                                      // deze functie wordt 1x uit
   pinMode(pinAIN2, OUTPUT);   // rechter motor richting digital output
 }
 
-void loop() {                                       // deze functie wordt oneindig herhaald
-  // lees sensorwaarden
+// deze functie wordt oneindig herhaald
+void loop() {
+  // STAP 1: lees sensorwaarden
   afstandVoor = ultrasonicDistance(pinTRIG, pinECHO);
-  Serial.print("afstandVoor: ");Serial.print(afstandVoor);Serial.println(" cm");
+  Serial.print("afstandVoor: ");
+  Serial.print(afstandVoor);
+  Serial.println(" cm");
 
-  // bepaal toestand
+  // STAP 2: bepaal of de toestand moet veranderen
   if (toestand == VOORUIT) {                        // als toestand VOORUIT is
     if (afstandVoor < 50) {                         // afstand < 50 cm
       toestandStartTijd = millis();                 // reset tijd
@@ -82,7 +86,7 @@ void loop() {                                       // deze functie wordt oneind
     }
     // schrijf hier je eigen code voor een 2e pijl uit toestand VOORUIT. Haal hiervoor /* en */ weg
     /*
-    if () {                                         // conditie voor 2e pijl uit toestand VOORUIT invullen
+    if () {                                         // voorwaarde voor 2e pijl uit toestand VOORUIT invullen
                                                     // code invullen
     }
     */
@@ -95,9 +99,9 @@ void loop() {                                       // deze functie wordt oneind
     }
   }
 
-  // zet actuatoren zoals hoort bij de toestand
+  // STAP 3: zet actuatoren zoals hoort bij de toestand
   if (toestand == VOORUIT) {
-    int Speed = 100; // snelheid 0 t/m 255
+    int speed = 100;            // snelheid 0 t/m 255
     analogWrite(pinPWMA,Speed); // snelheid linkermotor
     analogWrite(pinPWMB,Speed); // snelheid rechtermotor
     digitalWrite(pinAIN1,LOW);  // linker motor vooruit
@@ -106,7 +110,7 @@ void loop() {                                       // deze functie wordt oneind
     digitalWrite(pinBIN2,HIGH); // rechter motor vooruit 
   }
   if (toestand == DRAAI) {
-    int Speed = 50; // snelheid 0 t/m 255
+    int speed = 50;             // snelheid 0 t/m 255
     analogWrite(pinPWMA,Speed); // snelheid linkermotor
     analogWrite(pinPWMB,Speed); // snelheid rechtermotor
     digitalWrite(pinAIN1,LOW);  // linker motor vooruit

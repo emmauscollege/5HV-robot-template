@@ -2,7 +2,7 @@
    Arcadebox startcode
    met toestandsdiagrammen
    Emmauscollege
-   v20230921CAM
+   v20261016CAM
  *****************************************/
 
 /*****************************************
@@ -83,15 +83,15 @@ void setup() {
 }
 
 void loop() {
-  // lees sensorwaarden
+  // STAP 1: lees sensorwaarden
   waardeKnopBlauw = digitalRead(pinKnopBlauw);
   waardeKnopGroen = digitalRead(pinKnopGroen);
   waardeKnopGeel = digitalRead(pinKnopGeel);
   waardeKnopWit = digitalRead(pinKnopWit);
 
-  // bepaal toestand
+  // STAP 2: bepaal of de toestand moet veranderen
   if (toestand == TELAF) {
-    if (millis() - startTijd > 2000) { // 2 seconden voorbij
+    if (millis() - startTijd > 2000) {           // 2 seconden voorbij
       startTijd = millis();
       toestand = SPEEL;
       Serial.println("Nieuwe toestand: SPEEL");
@@ -101,21 +101,21 @@ void loop() {
     if (waardeKnopBlauw == LOW ||
         waardeKnopGroen == LOW ||
         waardeKnopGeel  == LOW ||
-        waardeKnopWit   == LOW   ) { // een knop ingedrukt
+        waardeKnopWit   == LOW   ) {             // een knop ingedrukt
       startTijd = millis();
       toestand = WIN;
       Serial.println("Nieuwe toestand: WIN");
     }
   }
   if (toestand == WIN) {
-    if (millis() - startTijd > 1000) { // 0,5 seconde voorbij
+    if (millis() - startTijd > 1000) {           // 0,5 seconde voorbij
       startTijd = millis();
       toestand = TELAF;
       Serial.println("Nieuwe toestand: TELAF");
     }
   }
 
-  // zet actuatoren
+  // STAP 3: zet actuatoren
   if (toestand == TELAF) {
     digitalWrite(pinLedBlauw, HIGH);
     digitalWrite(pinLedGroen, HIGH);
@@ -133,7 +133,7 @@ void loop() {
     lcd.print("SPEEL:druk knop");    
   }
   if (toestand == WIN) {
-    tone(pinSpeaker, 500, 100); // speaker piept 100ms op 500hz, maar programma gaat door terwijl speaker piept
+    tone(pinSpeaker, 500, 100);                  // speaker piept 100ms op 500hz, maar programma gaat door terwijl speaker piept
     lcd.setCursor(0, 0);
     lcd.print("WIN:n-joy sound");   
   }

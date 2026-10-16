@@ -1,6 +1,9 @@
 Deze repo is onderdeel van het vak informatica op het Emmauscollege Rotterdam.
 
-In deze repo bewaar je alle bestanden die je maakt voor de [opdracht Robots](https://informatica.emmauscollege.nl/).
+In deze repo bewaar je alle bestanden die je maakt voor de [opdracht Robots](https://informatica.emmauscollege.nl/opdrachten/robot/). Kijk ook op deze website voor extra uitleg.
+
+## Uitleg
+Zie [de uitleg op de website van informatica] voor hulp om deze opdracht te maken.
 
 ## Documentatie
 - Elke apparaat heeft een map in deze repo met de startcode (.ino bestand) en een technische uitleg (README.md bestand). 
