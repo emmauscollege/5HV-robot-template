@@ -102,21 +102,21 @@ void loop() {
   // STAP 3: zet actuatoren zoals hoort bij de toestand
   if (toestand == VOORUIT) {
     int speed = 100;            // snelheid 0 t/m 255
-    analogWrite(pinPWMA,Speed); // snelheid linkermotor
-    analogWrite(pinPWMB,Speed); // snelheid rechtermotor
-    digitalWrite(pinAIN1,LOW);  // linker motor vooruit
-    digitalWrite(pinAIN2,HIGH); // linker motor vooruit
-    digitalWrite(pinBIN1,LOW);  // rechter motor vooruit 
-    digitalWrite(pinBIN2,HIGH); // rechter motor vooruit 
+    analogWrite(pinPWMA, speed); // snelheid linkermotor
+    analogWrite(pinPWMB, speed); // snelheid rechtermotor
+    digitalWrite(pinAIN1, LOW);  // linker motor vooruit
+    digitalWrite(pinAIN2, HIGH); // linker motor vooruit
+    digitalWrite(pinBIN1, LOW);  // rechter motor vooruit 
+    digitalWrite(pinBIN2, HIGH); // rechter motor vooruit 
   }
   if (toestand == DRAAI) {
     int speed = 50;             // snelheid 0 t/m 255
-    analogWrite(pinPWMA,Speed); // snelheid linkermotor
-    analogWrite(pinPWMB,Speed); // snelheid rechtermotor
-    digitalWrite(pinAIN1,LOW);  // linker motor vooruit
-    digitalWrite(pinAIN2,HIGH); // linker motor vooruit
-    digitalWrite(pinBIN1,HIGH); // rechter motor achteruit  
-    digitalWrite(pinBIN2,LOW);  // rechter motor achteruit  
+    analogWrite(pinPWMA, speed); // snelheid linkermotor
+    analogWrite(pinPWMB, speed); // snelheid rechtermotor
+    digitalWrite(pinAIN1, LOW);  // linker motor vooruit
+    digitalWrite(pinAIN2, HIGH); // linker motor vooruit
+    digitalWrite(pinBIN1, HIGH); // rechter motor achteruit  
+    digitalWrite(pinBIN2, LOW);  // rechter motor achteruit  
   }
 
   // vertraging om te zorgen dat berichten op de seriele monitor leesbaar blijven
